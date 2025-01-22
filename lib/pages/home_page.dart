@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:signal/components/appbar.dart';
 import 'package:signal/provider/audio_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -9,17 +10,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Signal processing'),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        titleTextStyle: const TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.w600,
-          color: Colors.black87,
-        ),
-      ),
+      appBar: appbarComponent("Signal Processing"),
       extendBodyBehindAppBar: true,
       body: Container(
         decoration: const BoxDecoration(
@@ -76,16 +67,16 @@ class HomePage extends StatelessWidget {
                     ),
                   )
                       .animate(
-                    onPlay: (controller) => audioProvider.isRecording
-                        ? controller.repeat()
-                        : controller.stop(),
-                  )
+                        onPlay: (controller) => audioProvider.isRecording
+                            ? controller.repeat()
+                            : controller.stop(),
+                      )
                       .scale(
-                    begin: const Offset(1, 1),
-                    end: const Offset(1.1, 1.1),
-                    duration: const Duration(milliseconds: 800),
-                    curve: Curves.easeInOut,
-                  ),
+                        begin: const Offset(1, 1),
+                        end: const Offset(1.1, 1.1),
+                        duration: const Duration(milliseconds: 800),
+                        curve: Curves.easeInOut,
+                      ),
                   const SizedBox(height: 40),
                   Animate(
                     child: ElevatedButton(
@@ -116,7 +107,11 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                   )
-                      .slideY(begin: 0.2, end: 0, duration: const Duration(milliseconds: 500), curve: Curves.easeOut)
+                      .slideY(
+                          begin: 0.2,
+                          end: 0,
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.easeOut)
                       .fadeIn(duration: const Duration(milliseconds: 500)),
                   const SizedBox(height: 20),
                   Animate(
@@ -140,7 +135,11 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                   )
-                      .slideY(begin: 0.2, end: 0, duration: const Duration(milliseconds: 500), curve: Curves.easeOut)
+                      .slideY(
+                          begin: 0.2,
+                          end: 0,
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.easeOut)
                       .fadeIn(duration: const Duration(milliseconds: 500)),
                 ],
               );

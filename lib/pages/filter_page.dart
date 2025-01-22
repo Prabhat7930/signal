@@ -12,10 +12,10 @@ class FilterPage extends StatefulWidget {
   final int sampleRate;
 
   const FilterPage({
-    Key? key,
+    super.key,
     required this.originalFilePath,
     required this.sampleRate,
-  }) : super(key: key);
+  });
 
   @override
   State<FilterPage> createState() => _FilterPageState();
@@ -39,8 +39,8 @@ class _FilterPageState extends State<FilterPage> {
     try {
       final directory = await getApplicationDocumentsDirectory();
       final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final newFilePath = '${directory.path}/bandpass_${timestamp}.wav';
-      
+      final newFilePath = '${directory.path}/bandpass_$timestamp.wav';
+
       final filteredDoubleAudio = await AudioFilter.applyBandPassFilter(
           inputPath: widget.originalFilePath,
           outputPath: newFilePath,
@@ -51,7 +51,8 @@ class _FilterPageState extends State<FilterPage> {
       return filteredDoubleAudio;
     } catch (e) {
       debugPrint('Error applying band-pass filter: $e');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error applying band-pass filter: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error applying band-pass filter: $e')));
       return null;
     } finally {
       setState(() => _isFiltering = false);
@@ -59,13 +60,14 @@ class _FilterPageState extends State<FilterPage> {
   }
 
   Future<String?> _applyBandStopFilter(double lowFreq, double highFreq) async {
-     setState(() => _isFiltering = true);
+    setState(() => _isFiltering = true);
     try {
       final directory = await getApplicationDocumentsDirectory();
       final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final newFilePath = '${directory.path}/bandstop_${timestamp}.wav';
-       final audioBytes = await File(widget.originalFilePath).readAsBytes();
-      final audioData = await compute(_decodeAudio, audioBytes.buffer.asInt16List());
+      final newFilePath = '${directory.path}/bandstop_$timestamp.wav';
+      final audioBytes = await File(widget.originalFilePath).readAsBytes();
+      final audioData =
+          await compute(_decodeAudio, audioBytes.buffer.asInt16List());
       if (audioData == null) {
         throw Exception("Error Decoding the audio file");
       }
@@ -76,18 +78,22 @@ class _FilterPageState extends State<FilterPage> {
         highFreq,
       );
 
-      final filteredBytes = Int16List.fromList(filteredAudio.map((e) => (e * 32768).round().clamp(-32768, 32767).toInt()).toList()).buffer.asUint8List();
+      final filteredBytes = Int16List.fromList(filteredAudio
+              .map((e) => (e * 32768).round().clamp(-32768, 32767).toInt())
+              .toList())
+          .buffer
+          .asUint8List();
       await File(newFilePath).writeAsBytes(filteredBytes);
       return newFilePath;
     } catch (e) {
       debugPrint('Error applying band-stop filter: $e');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error applying band-stop filter: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error applying band-stop filter: $e')));
       return null;
     } finally {
       setState(() => _isFiltering = false);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -119,43 +125,55 @@ class _FilterPageState extends State<FilterPage> {
             ElevatedButton.icon(
               icon: const Icon(Icons.filter_alt),
               label: const Text('Apply Band-Pass Filter'),
-              onPressed: _isFiltering ? null : () async {
-                final low = double.tryParse(_lowFreqController.text) ?? 0;
-                final high = double.tryParse(_highFreqController.text) ?? widget.sampleRate / 2;
+              onPressed: _isFiltering
+                  ? null
+                  : () async {
+                      final low = double.tryParse(_lowFreqController.text) ?? 0;
+                      final high = double.tryParse(_highFreqController.text) ??
+                          widget.sampleRate / 2;
 
-                if (low >= high) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Lower frequency must be less than higher frequency')),
-                  );
-                  return;
-                }
+                      if (low >= high) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  'Lower frequency must be less than higher frequency')),
+                        );
+                        return;
+                      }
 
-                _processedFilePath = await _applyBandPassFilter(low, high);
-                if (_processedFilePath != null) {
-                  _navigateToComparisonPage(low, high, 'Band-Pass');
-                }
-              },
+                      _processedFilePath =
+                          await _applyBandPassFilter(low, high);
+                      if (_processedFilePath != null) {
+                        _navigateToComparisonPage(low, high, 'Band-Pass');
+                      }
+                    },
             ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
               icon: const Icon(Icons.filter_alt),
               label: const Text('Apply Band-Stop Filter'),
-              onPressed: _isFiltering ? null : () async {
-                final low = double.tryParse(_lowFreqController.text) ?? 0;
-                final high = double.tryParse(_highFreqController.text) ?? widget.sampleRate / 2;
+              onPressed: _isFiltering
+                  ? null
+                  : () async {
+                      final low = double.tryParse(_lowFreqController.text) ?? 0;
+                      final high = double.tryParse(_highFreqController.text) ??
+                          widget.sampleRate / 2;
 
-                if (low >= high) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Lower frequency must be less than higher frequency')),
-                  );
-                  return;
-                }
+                      if (low >= high) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  'Lower frequency must be less than higher frequency')),
+                        );
+                        return;
+                      }
 
-                _processedFilePath = await _applyBandStopFilter(low, high);
-                if (_processedFilePath != null) {
-                  _navigateToComparisonPage(low, high, 'Band-Stop');
-                }
-              },
+                      _processedFilePath =
+                          await _applyBandStopFilter(low, high);
+                      if (_processedFilePath != null) {
+                        _navigateToComparisonPage(low, high, 'Band-Stop');
+                      }
+                    },
             ),
             if (_isFiltering)
               const Padding(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:signal/components/appbar.dart';
 import 'package:signal/pages/signal_analysis_page.dart';
 import 'package:signal/provider/audio_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -27,10 +28,10 @@ class _RecordListPageState extends State<RecordListPage> {
   Future<void> _togglePlayback(String filePath) async {
     if (_currentlyPlayingPath == filePath && _isPlaying) {
       await _player.pause();
-      if(mounted){
+      if (mounted) {
         setState(() {
-        _isPlaying = false;
-      });
+          _isPlaying = false;
+        });
       }
     } else {
       if (_currentlyPlayingPath != filePath) {
@@ -39,55 +40,42 @@ class _RecordListPageState extends State<RecordListPage> {
       } else {
         await _player.resume();
       }
-     if(mounted){
-          setState(() {
-        _currentlyPlayingPath = filePath;
-        _isPlaying = true;
-      });
-     }
-    }
-  }
-   Future<void> _stopPlayback() async {
-    if (_isPlaying) {
-      await _player.stop();
-       if(mounted){
-         setState(() {
-        _isPlaying = false;
-      });
-       }
+      if (mounted) {
+        setState(() {
+          _currentlyPlayingPath = filePath;
+          _isPlaying = true;
+        });
+      }
     }
   }
 
+  Future<void> _stopPlayback() async {
+    if (_isPlaying) {
+      await _player.stop();
+      if (mounted) {
+        setState(() {
+          _isPlaying = false;
+        });
+      }
+    }
+  }
 
   void _navigateToSignalAnalysis(String filePath) async {
     await _stopPlayback();
-      if (mounted){
-             Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => SignalAnalysisPage(
-                filePath: filePath,
-              ),
-            ),
-          );
-      }
-
+    if (mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SignalAnalysisPage(filePath: filePath),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Recordings'),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        titleTextStyle: const TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.w600,
-          color: Colors.black87,
-        ),
-      ),
+      appBar: appbarComponent("Recordings"),
       extendBodyBehindAppBar: true,
       body: Container(
         decoration: const BoxDecoration(
@@ -122,8 +110,7 @@ class _RecordListPageState extends State<RecordListPage> {
                       return Card(
                         elevation: 3,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                            borderRadius: BorderRadius.circular(12)),
                         margin: EdgeInsets.zero,
                         child: ListTile(
                           contentPadding: const EdgeInsets.symmetric(
@@ -140,7 +127,8 @@ class _RecordListPageState extends State<RecordListPage> {
                                   : Colors.blueGrey,
                               size: 32,
                             ),
-                            onPressed: () => _togglePlayback(recording.filePath),
+                            onPressed: () =>
+                                _togglePlayback(recording.filePath),
                           ),
                           title: Text(
                             recording.title,
@@ -159,12 +147,11 @@ class _RecordListPageState extends State<RecordListPage> {
                               Icons.analytics_outlined,
                               color: Colors.grey,
                             ),
-                            onPressed: () => _navigateToSignalAnalysis(recording.filePath),
+                            onPressed: () =>
+                                _navigateToSignalAnalysis(recording.filePath),
                           ),
                         ),
-                      )
-                          .animate()
-                          .fadeIn(
+                      ).animate().fadeIn(
                             duration: const Duration(milliseconds: 300),
                           );
                     },

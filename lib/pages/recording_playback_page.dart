@@ -4,7 +4,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 class RecordingPlaybackPage extends StatefulWidget {
-  const RecordingPlaybackPage({Key? key}) : super(key: key);
+  const RecordingPlaybackPage({super.key});
 
   @override
   State<RecordingPlaybackPage> createState() => _RecordingPlaybackPageState();
@@ -36,11 +36,12 @@ class _RecordingPlaybackPageState extends State<RecordingPlaybackPage> {
 
   Future<void> loadRecordings() async {
     final directory = await getApplicationDocumentsDirectory();
-    final files = directory.listSync()
-      .where((entity) => entity.path.endsWith('.wav'))
-      .toList()
+    final files = directory
+        .listSync()
+        .where((entity) => entity.path.endsWith('.wav'))
+        .toList()
       ..sort((a, b) => b.statSync().modified.compareTo(a.statSync().modified));
-    
+
     setState(() {
       recordings = files;
     });
@@ -48,9 +49,9 @@ class _RecordingPlaybackPageState extends State<RecordingPlaybackPage> {
 
   String _formatDateTime(DateTime dateTime) {
     return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-'
-           '${dateTime.day.toString().padLeft(2, '0')} '
-           '${dateTime.hour.toString().padLeft(2, '0')}:'
-           '${dateTime.minute.toString().padLeft(2, '0')}';
+        '${dateTime.day.toString().padLeft(2, '0')} '
+        '${dateTime.hour.toString().padLeft(2, '0')}:'
+        '${dateTime.minute.toString().padLeft(2, '0')}';
   }
 
   String _formatFileSize(int bytes) {
@@ -86,7 +87,7 @@ class _RecordingPlaybackPageState extends State<RecordingPlaybackPage> {
         isPlaying = false;
       });
     }
-    
+
     await File(filePath).delete();
     await loadRecordings();
   }
@@ -147,8 +148,7 @@ class _RecordingPlaybackPageState extends State<RecordingPlaybackPage> {
                           builder: (context) => AlertDialog(
                             title: const Text('Delete Recording'),
                             content: const Text(
-                              'Are you sure you want to delete this recording?'
-                            ),
+                                'Are you sure you want to delete this recording?'),
                             actions: [
                               TextButton(
                                 child: const Text('Cancel'),

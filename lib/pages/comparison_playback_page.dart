@@ -1,5 +1,3 @@
-// comparison_playback_page.dart
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 
@@ -9,11 +7,11 @@ class ComparisonPlaybackPage extends StatefulWidget {
   final String filterDetails;
 
   const ComparisonPlaybackPage({
-    Key? key,
+    super.key,
     required this.originalFilePath,
     required this.filteredFilePath,
     required this.filterDetails,
-  }) : super(key: key);
+  });
 
   @override
   State<ComparisonPlaybackPage> createState() => _ComparisonPlaybackPageState();
@@ -27,61 +25,61 @@ class _ComparisonPlaybackPageState extends State<ComparisonPlaybackPage> {
   double _originalProgress = 0.0;
   double _filteredProgress = 0.0;
   Duration _originalDuration = Duration.zero;
-    Duration _filteredDuration = Duration.zero;
-
+  Duration _filteredDuration = Duration.zero;
 
   @override
   void initState() {
     super.initState();
     _setupPlayers();
   }
-  
 
   Future<void> _setupPlayers() async {
     try {
-      await _originalPlayer.setSource(DeviceFileSource(widget.originalFilePath));
-      await _filteredPlayer.setSource(DeviceFileSource(widget.filteredFilePath));
+      await _originalPlayer
+          .setSource(DeviceFileSource(widget.originalFilePath));
+      await _filteredPlayer
+          .setSource(DeviceFileSource(widget.filteredFilePath));
 
-       // Get the duration for each player
-      _originalDuration = (await _originalPlayer.getDuration()) ?? Duration.zero;
-      _filteredDuration = (await _filteredPlayer.getDuration()) ?? Duration.zero;
-      
-       _originalPlayer.onPositionChanged.listen((position) {
-        if(mounted){
+      // Get the duration for each player
+      _originalDuration =
+          (await _originalPlayer.getDuration()) ?? Duration.zero;
+      _filteredDuration =
+          (await _filteredPlayer.getDuration()) ?? Duration.zero;
+
+      _originalPlayer.onPositionChanged.listen((position) {
+        if (mounted) {
           setState(() {
-              _originalProgress = position.inMilliseconds / _originalDuration.inMilliseconds;
-              });
-          }
+            _originalProgress =
+                position.inMilliseconds / _originalDuration.inMilliseconds;
+          });
+        }
       });
 
       _filteredPlayer.onPositionChanged.listen((position) {
-        if(mounted){
-        setState(() {
-            _filteredProgress = position.inMilliseconds / _filteredDuration.inMilliseconds;
-        });
+        if (mounted) {
+          setState(() {
+            _filteredProgress =
+                position.inMilliseconds / _filteredDuration.inMilliseconds;
+          });
         }
       });
 
       _originalPlayer.onPlayerComplete.listen((event) {
-        if(mounted){
+        if (mounted) {
           setState(() {
             _isOriginalPlaying = false;
             _originalProgress = 0.0;
-            });
+          });
         }
       });
       _filteredPlayer.onPlayerComplete.listen((event) {
-         if(mounted){
+        if (mounted) {
           setState(() {
             _isFilteredPlaying = false;
             _filteredProgress = 0.0;
           });
         }
       });
-
-
-     
-      
     } catch (e) {
       debugPrint('Error setting up audio players: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -97,17 +95,16 @@ class _ComparisonPlaybackPageState extends State<ComparisonPlaybackPage> {
   }
 
   Future<void> _togglePlayOriginal() async {
-      if (_isOriginalPlaying) {
+    if (_isOriginalPlaying) {
       await _originalPlayer.pause();
     } else {
       await _originalPlayer.resume();
     }
-     if (mounted) {
+    if (mounted) {
       setState(() {
-          _isOriginalPlaying = !_isOriginalPlaying;
-        });
+        _isOriginalPlaying = !_isOriginalPlaying;
+      });
     }
-
   }
 
   Future<void> _togglePlayFiltered() async {
@@ -116,13 +113,12 @@ class _ComparisonPlaybackPageState extends State<ComparisonPlaybackPage> {
     } else {
       await _filteredPlayer.resume();
     }
-     if (mounted) {
+    if (mounted) {
       setState(() {
         _isFilteredPlaying = !_isFilteredPlaying;
       });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -143,46 +139,45 @@ class _ComparisonPlaybackPageState extends State<ComparisonPlaybackPage> {
               'Original Audio:',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-              _buildAudioPlayerControls(
-                playerType: 'Original',
-              ),
-                const SizedBox(height: 24),
-                const Text(
-                'Filtered Audio:',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-               _buildAudioPlayerControls(
-                playerType: 'Filtered',
-              ),
+            _buildAudioPlayerControls(
+              playerType: 'Original',
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'Filtered Audio:',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            _buildAudioPlayerControls(
+              playerType: 'Filtered',
+            ),
           ],
         ),
       ),
     );
   }
 
+  Widget _buildAudioPlayerControls({required String playerType}) {
+    bool isPlaying;
+    double progress;
+    VoidCallback togglePlay;
 
-   Widget _buildAudioPlayerControls({required String playerType}) {
-      bool isPlaying;
-      double progress;
-       VoidCallback togglePlay;
-
-      if(playerType == "Original"){
-          isPlaying = _isOriginalPlaying;
-          progress = _originalProgress;
-           togglePlay = _togglePlayOriginal;
-      }else{
-         isPlaying = _isFilteredPlaying;
-          progress = _filteredProgress;
-           togglePlay = _togglePlayFiltered;
-      }
+    if (playerType == "Original") {
+      isPlaying = _isOriginalPlaying;
+      progress = _originalProgress;
+      togglePlay = _togglePlayOriginal;
+    } else {
+      isPlaying = _isFilteredPlaying;
+      progress = _filteredProgress;
+      togglePlay = _togglePlayFiltered;
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-          Row(
+        Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-             IconButton(
+            IconButton(
               icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
               iconSize: 50,
               onPressed: togglePlay,
@@ -192,12 +187,10 @@ class _ComparisonPlaybackPageState extends State<ComparisonPlaybackPage> {
         Slider(
           value: progress,
           onChanged: (value) {
-              // do nothing
+            // do nothing
           },
         ),
       ],
     );
   }
-
-
 }
